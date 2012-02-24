@@ -11,6 +11,7 @@ exports.routes = function () {
   public_key: null,
   private_key: null,
   ttl: null,
+/*
   well_known_browserid: function (req, resp) {
       var timeout = 6 * 60 * 60;
       // On startup, keys need to be pulled from memcache or some such
@@ -32,6 +33,7 @@ exports.routes = function () {
         layout: false
       });
     },
+*/
     provision: function (req, resp) {
       console.log(req.session);
       resp.render('provision', {user: 
@@ -49,7 +51,7 @@ exports.routes = function () {
         resp.writeHead(400);
         return resp.end();
       }
-
+      console.log("signing a cert for email=", req.session.email);
       crypto.cert_key(
         req.body.pubkey,
         req.session.email,
@@ -59,6 +61,7 @@ exports.routes = function () {
             resp.writeHead(500);
             resp.end();
           } else {
+            console.log('cert:', cert);
             resp.json({ cert: cert });
           }
         });      
@@ -78,12 +81,14 @@ exports.routes = function () {
             resp.write('Email or Password incorrect');
             resp.writeHead(401);
           } else {
-            req.session.email = req.body.user;
+            req.session.email = req.body.user.replace('@mozilla.com', '@' + conf.issuer);
+            console.log('Putting ', req.session.email, ' into session');
             resp.writeHead(200);
           }
           resp.end();
         });
       }
-    }
+    },
+    signout: function (req, resp) { req.session.reset(); resp.send('bye!'); }
   };
 };

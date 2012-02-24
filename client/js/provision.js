@@ -6,24 +6,26 @@ window.provision = function (user) {
         if (! s2.toLowerCase) s2 = String(s2);
         return s1.toLowerCase() == s2.toLowerCase();
       },
-      msg;
-  console.log('hooking up begin provisioning with user=', user);
+      fail = navigator.id.raiseProvisioningFailure,
+      msg = "user is not authenticated as target user";
+  console.log('CLIENT hooking up begin provisioning with user=', user);
 
   // username@dev.clortho.mozilla.org
   navigator.id.beginProvisioning(function(email, cert_duration) {
-    console.log('callback');
-    console.log('begining provisioning', email, cert_duration);
-    var n_email = email.replace('dev.clortho.mozilla.org', 'mozilla.com');
+    console.log('CLIENT callback');
+    console.log('CLIENT begining provisioning', email, cert_duration);
+    //var n_email = email.replace('dev.clortho.mozilla.org', 'mozilla.com');
     if (! user) {
-      console.log('no session, failing');
-      console.log(navigator.id.raiseProvisioningFailure);
-      msg = "No Active Session";
-      navigator.id.raiseProvisioningFailure(msg);
+      console.log('CLIENT no session, failing');
+      console.log('CLIENT', navigator.id.raiseProvisioningFailure);
+      //navigator.id.raiseProvisioningFailure(msg);
+      fail(msg);
     } else {
-      if (cmpi(user, n_email)) {
-      console.log('emails matched', user, n_email, 'next genKeyPair');
-      navigator.id.genKeyPair(function(pubkey) {
-        $.ajax({
+      if (cmpi(user, email)) {
+      console.log('CLIENT emails matched ' + user + ' ' +
+                  email + ' next genKeyPair');
+        navigator.id.genKeyPair(function(pubkey) {
+          $.ajax({
             url: '/browserid/provision',
             data: JSON.stringify({
               pubkey: pubkey,
@@ -33,24 +35,22 @@ window.provision = function (user) {
             headers: { "Content-Type": 'application/json' },
             dataType: 'json',
             success: function(r) {
-              console.log("We successfully authed, registering cert");
+              console.log("CLIENT We successfully authed, registering cert " + r.cert);
               // all done!  woo!
               navigator.id.registerCertificate(r.cert);
             },
             error: function(r) {
-              console.log("Error certifying key, raising provision failure");
-              msg = "couldn't certify key";
+              console.log("CLIENT Error certifying key, raising provision failure");
               navigator.id.raiseProvisioningFailure(msg);
             }
           });
         });
-      } else {
-        msg = 'user is not authenticated as target user';
-        console.log(msg);
+      } else {        
+        console.log('CLIENT user/email didn\'t match ' + user + ' ' + email);
         navigator.id.raiseProvisioningFailure(msg);
       }    
     }
   }); //beginProvisioning
 };
-console.log('window.provision=', window.provision);
+console.log('CLIENT window.provision=', window.provision);
 })();

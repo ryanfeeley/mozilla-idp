@@ -45,13 +45,20 @@ app.configure(function(){
   app.get('/', function (req, resp) {
     resp.send("I am the keymaster");
   });
-  app.get('/.well-known/browserid', routes.well_known_browserid);
+  //app.get('/.well-known/browserid', routes.well_known_browserid);
   app.get('/browserid/provision', routes.provision);
   app.post('/browserid/provision', routes.provision_key);
   app.get('/browserid/sign_in', routes.signin);
   app.post('/browserid/sign_in', routes.check_signin);
+  app.get('/browserid/signout', routes.signout);
 
-
+  // now ensure that declaration of support is served with 'application/json'
+  app.use(function(req, res, next) {
+    if (req.url === '/.well-known/browserid') {
+      res.setHeader('Content-Type', 'application/json');
+    }
+   next();
+  });
   app.use(express.compiler({ enable: ['less'],
                              src: './client'}));
   app.use(express.static(__dirname + '/client'));
