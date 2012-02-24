@@ -11,7 +11,6 @@ exports.routes = function () {
   public_key: null,
   private_key: null,
   ttl: null,
-/*
   well_known_browserid: function (req, resp) {
       var timeout = 6 * 60 * 60;
       // On startup, keys need to be pulled from memcache or some such
@@ -19,7 +18,7 @@ exports.routes = function () {
         console.info('Stale keys, re-generating');
         this.ttl = new Date();
         // generate a fresh 1024 bit RSA key
-        var keypair = jwk.KeyPair.generate('RS', 128);
+        var keypair = jwk.KeyPair.generate('RS', 256);
 
         this.public_key = JSON.parse(keypair.publicKey.serialize());
         this.private_key = JSON.parse(keypair.secretKey.serialize());
@@ -33,7 +32,6 @@ exports.routes = function () {
         layout: false
       });
     },
-*/
     provision: function (req, resp) {
       console.log(req.session);
       resp.render('provision', {user: 
