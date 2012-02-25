@@ -45,7 +45,7 @@ app.configure(function(){
   app.get('/', function (req, resp) {
     resp.send("I am the keymaster");
   });
-  app.get('/make/.well-known/browserid', routes.well_known_browserid);
+  app.get('/.well-known/browserid', routes.well_known_browserid);
   app.get('/browserid/provision', routes.provision);
   app.post('/browserid/provision', routes.provision_key);
   app.get('/browserid/sign_in', routes.signin);
