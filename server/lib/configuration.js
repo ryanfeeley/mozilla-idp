@@ -7,11 +7,26 @@ const convict = require('convict'),
       path = require('path');
 
 var conf = module.exports = convict({
+  authentication_duration_ms: {
+    doc: "How long may a user stay signed?",
+    format: 'integer = 1209600000'
+  },
   basic_auth_realm: {
     doc: "Used when signin_method is basicauth",
     format: 'string = "Basic realm=\\"Mozilla Corporation - LDAP Login\\""'
   },
-
+  keysigner_bind_to: {
+    host: {
+      doc: "The ip address the keysigning server should bind",
+      format: 'string = "127.0.0.1"',
+      env: 'IP_ADDRESS'
+    },
+    port: {
+      doc: "The port the keysigning server should bind",
+      format: 'integer{1,65535} = 11003',
+      env: 'PORT'
+    }
+  },
   browserid_server: 'string = "https://browserid.org"',
   client_sessions: {
     cookie_name: 'string = "session_state"',
@@ -26,6 +41,15 @@ var conf = module.exports = convict({
   ldap_bind_password: 'string = "password"',
   ldap_server_url: 'string = "ldaps://addressbook.mozilla.com:636"',
   locale_directory: 'string = "locale"',
+  max_compute_processes: {
+    doc: "How many computation processes will be spun.  Default is good, based on the number of CPU cores on the machine.",
+    format: 'union { number{1, 256}; null; } = null',
+    env: 'MAX_COMPUTE_PROCESSES'
+  },
+  max_compute_duration: {
+    doc: "What is the longest (in seconds) we'll let the user wait before returning a 503?",
+    format: 'integer = 10'
+  },
   signin_method: {
     doc: "How should this app collect authentication credentials? With an HTML form or Basic Auth",
     format: 'string ["form", "basicauth"] = "basicauth"'

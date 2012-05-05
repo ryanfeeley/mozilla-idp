@@ -17,9 +17,10 @@ window.provision = function (user) {
       navigator.id.raiseProvisioningFailure(msg);
     } else {
       if (cmpi(user, email)) {
+      alert('wsapi_url=' + $('[name=wsapi_url]').val());
       navigator.id.genKeyPair(function(pubkey) {
         $.ajax({
-            url: window.location.href,
+            url: "_csrf": $('[name=wsapi_url]').val(),
             data: JSON.stringify({
               pubkey: pubkey,
               duration: cert_duration,

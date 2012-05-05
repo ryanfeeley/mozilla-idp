@@ -4,8 +4,6 @@
 
  const config = require('./lib/configuration'),
        crypto = require('./lib/crypto.js');
-       jwk = require("jwcrypto/jwk"),
-       jwcert = require("jwcrypto/jwcert"),
        util = require('util');
 
 var auth = require('./lib/auth').auth(config);
@@ -43,6 +41,7 @@ exports.routes = function () {
       }
       // On startup, keys need to be pulled from memcache or some such
       var pk = JSON.stringify(crypto.pubKey);
+      pk = '';
       console.log('======= CACHE HEADERS ========');
       resp.setHeader('Content-Type', 'application/json');
       resp.setHeader('Cache-Control', 'max-age=' + timeout);
@@ -56,8 +55,10 @@ exports.routes = function () {
       console.log('provision called', req.session.email);
       resp.render('provision', {user: req.session.email,
                                 browserid_server: config.get('browserid_server'),
+                                wsapi_url: '/browserid/wsapi/provision_key',
                                 layout: false});
     },
+    /*
     provision_key: function (req, resp) {
       console.log('provisioning key', req.body.pubkey);
       if (!req.session || !req.session.email) {
@@ -82,6 +83,7 @@ exports.routes = function () {
           }
         });
     },
+    */
     /* signin_from_form and check_signin_from_form are used for
        processing form based authentication, used when
        signin_method is 'form' */

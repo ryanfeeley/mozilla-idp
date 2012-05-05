@@ -6,6 +6,7 @@
 </head>
 <body>
 <input type="hidden" name="_csrf" value="<%= csrf_token %>" />
+<input type="hidden" name="wsapi_url" value="<%= wsapi_url %>" />
 <script type="text/javascript" src="<%= browserid_server %>/provisioning_api.js"></script>
 <script type="text/javascript" src="<%= static_mount_path %>/js/lib/jquery.min.js"></script>
 <script type="text/javascript" src="<%= static_mount_path %>/js/provision.js" /></script>
